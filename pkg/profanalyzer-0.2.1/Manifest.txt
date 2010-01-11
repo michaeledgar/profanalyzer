@@ -1,0 +1,8 @@
+History.txt
+Manifest.txt
+README.txt
+Rakefile
+config/list.yml
+lib/profanalyzer.rb
+test/test_profanalyzer.rb
+test/test_profanalyzer_advanced.rb

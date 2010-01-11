@@ -1,0 +1,23 @@
+=== 0.2.1 / 2009-03-25
+
+* Fixed some wordlist errors.
+
+=== 0.2.0 / 2009-03-23
+
+* Added an options hash to Profanalyzer#filter and Profanalyzer#profane?, letting you change settings but only within the scope of that call - using this hash won't change the global settings.
+
+=== 0.1.1 / 2009-03-22
+
+* Fixed the link to point to http://profanalyzer.rubyforge.org/
+
+=== 0.1.0 / 2009-03-22
+
+* First release
+
+  * Separates racist, sexual, and otherwise profane terms
+  * Rates each word on a scale from 0-5 of "badness", which is based on
+    my subjective opinion, and the use of the word in non-profane ways
+    (such as "ass" in "assess").
+
+
+  
