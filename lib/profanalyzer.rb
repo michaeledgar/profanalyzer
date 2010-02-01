@@ -165,7 +165,7 @@ class Profanalyzer
     end
     banned_words = self.forbidden_words_from_settings
     banned_words.each do |word|
-      if str =~ /#{word}/
+      if str =~ /#{word}/i
         @@settings = oldsettings if oldsettings
         return true
       end
@@ -205,12 +205,12 @@ class Profanalyzer
     retstr = str
     
     @@settings[:custom_subs].each do |k,v|
-      retstr.gsub!(/#{k.to_s}/,v.to_s)
+      retstr.gsub!(/#{k.to_s}/i,v.to_s)
     end
     
     banned_words = Profanalyzer.forbidden_words_from_settings
     banned_words.each do |word|
-      retstr.gsub!(/#{word}/,
+      retstr.gsub!(/#{word}/i,
           "#!$%@&!$%@%@&!$#!$%@&!$%@%@&!#!$%@&!$%@%@&!"[0..(word.length-1)])
     end
     @@settings = oldsettings if oldsettings
