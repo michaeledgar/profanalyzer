@@ -165,7 +165,7 @@ class Profanalyzer
     end
     banned_words = self.forbidden_words_from_settings
     banned_words.each do |word|
-      if str =~ /#{word}/i
+      if str =~ /\b#{word}\b/i
         @@settings = oldsettings if oldsettings
         return true
       end
@@ -205,17 +205,38 @@ class Profanalyzer
     retstr = str
     
     @@settings[:custom_subs].each do |k,v|
-      retstr.gsub!(/#{k.to_s}/i,v.to_s)
+      retstr.gsub!(/\b#{k.to_s}\b/i,v.to_s)
     end
     
     banned_words = Profanalyzer.forbidden_words_from_settings
     banned_words.each do |word|
-      retstr.gsub!(/#{word}/i,
+      retstr.gsub!(/\b#{word}\b/i,
           "#!$%@&!$%@%@&!$#!$%@&!$%@%@&!#!$%@&!$%@%@&!"[0..(word.length-1)])
     end
     @@settings = oldsettings if oldsettings
     retstr
-  end
+  end                 
+  
+  def self.strip(*args)
+    str = args[0]
+    if (args.size > 1 && args[1].is_a?(Hash))
+      oldsettings = @@settings
+      self.update_settings_from_hash args[1]
+    end
+    
+    retstr = str
+    
+    @@settings[:custom_subs].each do |k,v|
+      retstr.gsub!(/\b#{k.to_s}\b/i,v.to_s)
+    end
+    
+    banned_words = Profanalyzer.forbidden_words_from_settings
+    banned_words.each do |word|
+      retstr.gsub!(/\b#{word}\b/i,"")
+    end
+    @@settings = oldsettings if oldsettings
+    retstr
+  end 
   
   # Sets Profanalyzer's tolerance. Value should be an integer such that 
   # 0 <= T <= 5.
