@@ -1,8 +1,8 @@
-= profanalyzer
+# profanalyzer
 
 * http://profanalyzer.rubyforge.org/
 
-== DESCRIPTION:
+## Description
 
 Profanalyzer has one purpose: analyze a block of text for profanity. It is able to filter profane words as well. 
 
@@ -12,7 +12,7 @@ The Profanalyzer will default to a tolerance of of 2, which will kick back the a
 
 Lastly, it allows for custom substitutions! For example, the filter at the website http://www.fark.com/ turns the word "fuck" into "fark", and "shit" into "shiat". You can specify these if you want.
 
-== FEATURES/PROBLEMS:
+## FEATURES/PROBLEMS:
 
 * Tolerance-based filtering
 * Switch between checking all words, racist terms, sexual words, or some 
@@ -20,7 +20,7 @@ Lastly, it allows for custom substitutions! For example, the filter at the websi
 * Custom substitutions
 * Boolean-based profanity checking (skipping the filtering)
 
-== SYNOPSIS:
+## SYNOPSIS:
 
 Out of the box, you can simply use Profanalyzer.filter and 
 Profanalyzer.profane?:
@@ -54,15 +54,20 @@ Lastly, you can add custom substitutions:
     Profanalyzer.filter("fuck") #==> "fark"
 
 
-== REQUIREMENTS:
+## Requirements
 
 hoe - a gem for building gems, which I used for profanalyzer.
 
-== INSTALL:
+## Contributors
+
+* Michael Edgar
+* Thomas Hanley <tjhanley.com@gmail.com>
+
+## Installation
 
 sudo gem install profanalyzer
 
-== LICENSE:
+## License
 
 (The MIT License)
 
