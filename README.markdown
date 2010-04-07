@@ -60,7 +60,7 @@ hoe - a gem for building gems, which I used for profanalyzer.
 
 ## Contributors
 
-* Michael Edgar
+* Michael Edgar <adgar@carboni.ca>
 * Thomas Hanley <tjhanley.com@gmail.com>
 
 ## Installation
