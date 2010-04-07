@@ -8,7 +8,7 @@ Hoe.new('profanalyzer', Profanalyzer::VERSION) do |p|
   p.rubyforge_name = 'profanalyzer' # if different than lowercase project name
   p.developer('Michael J. Edgar', 'edgar@triqweb.com')
   p.remote_rdoc_dir = ''
-  
+  p.summary = "Analyzes a block of text for profanity. It is able to filter profane words as well."
   desc 'Post your blog announcement to blogger.'
   task :post_blogger do
     require 'blogger'
