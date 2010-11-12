@@ -100,11 +100,13 @@ class Profanalyzer
   
   VERSION = "1.0.0"
   
+  DEFAULT_TOLERANCE = 4
+  
   @@full_list = YAML::load_file(File.dirname(__FILE__)+"/../config/list.yml")
   @@racist_list = @@full_list.select {|w| w[:racist]}
   @@sexual_list = @@full_list.select {|w| w[:sexual]}
   
-  @@settings = {:racism => :forbidden, :sexual => :forbidden, :profane => :forbidden, :tolerance => 4, :custom_subs => {}}
+  @@settings = {:racism => :forbidden, :sexual => :forbidden, :profane => :forbidden, :tolerance => DEFAULT_TOLERANCE, :custom_subs => {}}
   
   def self.forbidden_words_from_settings # :nodoc:
     banned_words = []
@@ -242,6 +244,12 @@ class Profanalyzer
   # 0 <= T <= 5.
   def self.tolerance=(new_tol)
     @@settings[:tolerance] = new_tol
+  end
+  
+  # Returns Profanalyzer's tolerance. Value will be an integer
+  # 0 <= T <= 5.
+  def self.tolerance
+    @@settings[:tolerance]
   end
   
   # Sets Profanalyzer to scan (or not scan) for racist words, based on 
