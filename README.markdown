@@ -8,7 +8,7 @@ Profanalyzer has one purpose: analyze a block of text for profanity. It is able 
 
 What sets it slightly apart from other filters is that it classifies each blocked word as "profane", "racist", or "sexual" - although right now, each word is considered "profane". It also rates each word on a scale from 0-5,  which is based on my subjective opinion, as well as whether the word is commonly used in non-profane situations, such as "ass" in "assess".
 
-The Profanalyzer will default to a tolerance of of 2, which will kick back the arguably non-profane words. It will also test against all words, including racist or sexual words.
+The Profanalyzer will default to a tolerance of of 4, which will kick back the arguably non-profane words. It will also test against all words, including racist or sexual words.
 
 Lastly, it allows for custom substitutions! For example, the filter at the website http://www.fark.com/ turns the word "fuck" into "fark", and "shit" into "shiat". You can specify these if you want.
 

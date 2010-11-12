@@ -3,6 +3,17 @@ require "profanalyzer"
 
 class TestProfanalyzer < Test::Unit::TestCase
   
+  def test_default_tolerance
+    assert_equal Profanalyzer::DEFAULT_TOLERANCE, Profanalyzer.tolerance
+  end
+  
+  def test_profanalyzer_tolerance
+    0.upto(5) do |tolerance|
+      Profanalyzer.tolerance = tolerance # setter
+      assert_equal tolerance, Profanalyzer.tolerance # getter
+    end
+  end
+  
   def test_single_word
     Profanalyzer.tolerance = 0
     Profanalyzer.check_all = true
