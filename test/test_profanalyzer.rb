@@ -18,6 +18,7 @@ class TestProfanalyzer < Test::Unit::TestCase
     Profanalyzer.tolerance = 0
     Profanalyzer.check_all = true
     assert_equal(true, Profanalyzer.profane?("asshole"))
+    assert_equal(["asshole"], Profanalyzer.flagged_words("asshole"))
   end
   
   def test_single_racist_word
@@ -27,6 +28,8 @@ class TestProfanalyzer < Test::Unit::TestCase
     Profanalyzer.check_racist = true
     assert_equal(true, Profanalyzer.profane?("spic"))
     assert_equal(false, Profanalyzer.profane?("pussy"))
+    assert_equal(["spic"], Profanalyzer.flagged_words("spic"))
+    assert_equal([], Profanalyzer.flagged_words("pussy"))
   end
   
   def test_single_sexual_word
@@ -36,6 +39,8 @@ class TestProfanalyzer < Test::Unit::TestCase
     Profanalyzer.check_sexual = true
     assert_equal(true, Profanalyzer.profane?("vagina"))
     assert_equal(false, Profanalyzer.profane?("nigger"))
+    assert_equal(["vagina"], Profanalyzer.flagged_words("vagina"))
+    assert_equal([], Profanalyzer.flagged_words("nigger"))
   end
   
   def test_tolerance
@@ -43,6 +48,8 @@ class TestProfanalyzer < Test::Unit::TestCase
     Profanalyzer.check_all = true
     assert_equal(false, Profanalyzer.profane?("asskisser")) # badness = 3
     assert_equal(true, Profanalyzer.profane?("fuck"))       # badness = 5
+    assert_equal([], Profanalyzer.flagged_words("asskisser")) # badness = 3
+    assert_equal(["fuck"], Profanalyzer.flagged_words("fuck"))       # badness = 5
   end
   
   def test_sexual_tolerance
@@ -52,6 +59,8 @@ class TestProfanalyzer < Test::Unit::TestCase
     Profanalyzer.check_sexual = true
     assert_equal(false, Profanalyzer.profane?("vagina")) # badness = 3
     assert_equal(true, Profanalyzer.profane?("cunt"))       # badness = 5
+    assert_equal([], Profanalyzer.flagged_words("vagina")) # badness = 3
+    assert_equal(["cunt"], Profanalyzer.flagged_words("cunt"))       # badness = 5
   end
   
   def test_racist_tolerance
@@ -61,6 +70,8 @@ class TestProfanalyzer < Test::Unit::TestCase
     Profanalyzer.check_racist = true
     assert_equal(false, Profanalyzer.profane?("mick")) # badness = 3
     assert_equal(true, Profanalyzer.profane?("nigger"))       # badness = 5
+    assert_equal([], Profanalyzer.flagged_words("mick")) # badness = 3
+    assert_equal(["nigger"], Profanalyzer.flagged_words("nigger"))       # badness = 5
   end
   
   def test_filter
@@ -100,6 +111,12 @@ class TestProfanalyzer < Test::Unit::TestCase
     
     Profanalyzer.substitute(:fuck => :fark)
     assert_equal("fark", Profanalyzer.filter("fuck"))
+  end
+
+  def test_multiple_matches_in_flagged_words
+    Profanalyzer.tolerance = 0
+    Profanalyzer.check_all = true
+    assert_equal(["shit", "mick", "cocksucking"], Profanalyzer.flagged_words("You're a cocksucking piece of shit, you mick."))    
   end
 
 end

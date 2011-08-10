@@ -175,7 +175,47 @@ class Profanalyzer
     @@settings = oldsettings if oldsettings
     false
   end
-  
+ 
+  # Returns an array of words that match the currently set rules against the
+  # provided string.  The array will be empty if no words are matched.
+  #
+  # Example:
+  #    Profanalyzer.filter("shit damn foo") #==> ["shit", "damn"] 
+  #    Profanalyzer.filter("profanalyzer is rad!") #==> [] 
+  #
+  ## With custom settings
+  #    Profanalyzer.check_all = false
+  #    Profanalyzer.check_racist = false
+  #    Profanalyzer.flagged_words("you're a mick") #==> []
+  #
+  # You can pass options to the method itself:
+  #    Profanalyzer.flagged_words("you're a mick", :racist => false) #==> []
+  #
+  # Available options:
+  # 
+  # [:+all+]     Set to +true+ or +false+ to specify checking all words in the blacklist
+  # [:+sexual+]  Set to +true+ or +false+ to specify sexual checking
+  # [:+racist+]  Set to +true+ or +false+ to specify racial slur checking
+  # [:+tolerance+] Sets the tolerance. 0-5.
+  def self.flagged_words(*args)
+    flagged_words = []
+    str = args[0]
+
+    if (args.size > 1 && args[1].is_a?(Hash))
+      oldsettings = @@settings
+      self.update_settings_from_hash args[1]
+    end
+
+    banned_words = self.forbidden_words_from_settings
+    banned_words.each do |word|
+      if str =~ /\b#{word}\b/i
+        @@settings = oldsettings if oldsettings
+        flagged_words << word
+      end
+    end
+    return flagged_words
+  end
+
   # Filters the provided string using the currently set rules, with #!@$%-like
   # characters substituted in.
   #
