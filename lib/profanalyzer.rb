@@ -98,7 +98,7 @@ require 'yaml'
 # SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 class Profanalyzer
   
-  VERSION = "1.0.0"
+  VERSION = "1.1.0"
   
   DEFAULT_TOLERANCE = 4
   
