@@ -180,8 +180,8 @@ class Profanalyzer
   # provided string.  The array will be empty if no words are matched.
   #
   # Example:
-  #    Profanalyzer.filter("shit damn foo") #==> ["shit", "damn"] 
-  #    Profanalyzer.filter("profanalyzer is rad!") #==> [] 
+  #    Profanalyzer.flagged_words("shit damn foo") #==> ["shit", "damn"] 
+  #    Profanalyzer.flagged_words("profanalyzer is rad!") #==> [] 
   #
   ## With custom settings
   #    Profanalyzer.check_all = false
