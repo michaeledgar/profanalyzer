@@ -45,6 +45,19 @@ Or do specific checking:
     Profanalyzer.profane? "mick" #==> false
     Profanalyzer.profane? "vagina" #==> true
 
+You can obtain a list of the words which fell afoul of profanity checking:
+
+    Profanalyzer.flagged_words("shit damn foo") #==> ["shit", "damn"] 
+    Profanalyzer.flagged_words("profanalyzer is rad!") #==> [] 
+    
+    # With custom settings
+    Profanalyzer.check_all = false
+    Profanalyzer.check_racist = false
+    Profanalyzer.flagged_words("you're a mick") #==> []
+    
+    # You can pass options to the method itself:
+    Profanalyzer.flagged_words("you're a mick", :racist => false) #==> []
+
 Lastly, you can add custom substitutions:
 
     Profanalyzer.substitute("shit","shiat")
@@ -63,6 +76,7 @@ hoe - a gem for building gems, which I used for profanalyzer.
 * Michael Edgar <adgar@carboni.ca>
 * Thomas Hanley <tjhanley.com@gmail.com>
 * Peter Vandenberk <pvandenberk@mac.com>
+* Christopher M. Hobbs <chris@altbit.org> (nilmethod)
 
 ## Installation
 
