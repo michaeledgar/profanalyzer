@@ -66,6 +66,19 @@ Lastly, you can add custom substitutions:
     Profanalyzer.substitute(:fuck => :fark)
     Profanalyzer.filter("fuck") #==> "fark"
 
+## Non-Global-State use
+
+If you want to not just use global state everywhere, perhaps because you
+need different profanity settings in different contexts, simply create an
+instance of the Profanalyzer class, and use the same methods you were
+using before on the instance:
+
+    analyzer = Profanalyzer.new
+    analyzer.tolerance = 5
+    analyzer.profane? 'hooker' #==> false
+    analyzer.filter 'fuck' #==> '#!$%'
+
+Changing this instance's settings won't affect any other analyzers.
 
 ## Requirements
 
