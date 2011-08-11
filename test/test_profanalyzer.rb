@@ -102,7 +102,7 @@ class TestProfanalyzer < Test::Unit::TestCase
     assert_equal(filtered_string, Profanalyzer.filter(original_string))
   end
   
-  def test_subtitutions
+  def test_substitutions
     Profanalyzer.substitute("shit","shiat")
     assert_equal("shiat", Profanalyzer.filter("shit"))
     

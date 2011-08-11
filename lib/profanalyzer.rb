@@ -102,32 +102,57 @@ class Profanalyzer
   
   DEFAULT_TOLERANCE = 4
   
-  @@full_list = YAML::load_file(File.dirname(__FILE__)+"/../config/list.yml")
-  @@racist_list = @@full_list.select {|w| w[:racist]}
-  @@sexual_list = @@full_list.select {|w| w[:sexual]}
+  FULL = YAML::load_file(File.dirname(__FILE__)+"/../config/list.yml")
+  RACIST = FULL.select {|w| w[:racist]}
+  SEXUAL = FULL.select {|w| w[:sexual]}
   
-  @@settings = {:racism => :forbidden, :sexual => :forbidden, :profane => :forbidden, :tolerance => DEFAULT_TOLERANCE, :custom_subs => {}}
+  DEFAULT_SETTINGS = {:racism => :forbidden,
+                      :sexual => :forbidden,
+                      :profane => :forbidden,
+                      :tolerance => DEFAULT_TOLERANCE,
+                      :custom_subs => {}}
   
-  def self.forbidden_words_from_settings # :nodoc:
+  def self.singleton_class
+    class << self; self; end
+  end unless defined?(singleton_class)
+
+  def self.forward_to_default(*methods)
+    methods.each do |method|
+      singleton_class.class_eval do
+        define_method method do |*args|
+          DEFAULT_INSTANCE.send(method, *args)
+        end
+      end
+    end
+  end
+
+  def initialize(settings=DEFAULT_SETTINGS)
+    @settings = DEFAULT_SETTINGS
+  end
+
+  DEFAULT_INSTANCE = new
+
+  def forbidden_words_from_settings # :nodoc:
     banned_words = []
     
-    @@full_list.each do |word|
-      banned_words << word[:word] if @@settings[:tolerance] <= word[:badness]
-    end if @@settings[:profane] == :forbidden
+    FULL.each do |word|
+      banned_words << word[:word] if @settings[:tolerance] <= word[:badness]
+    end if @settings[:profane] == :forbidden
     
-    return banned_words if @@settings[:profane] == :forbidden #save some processing
+    return banned_words if @settings[:profane] == :forbidden #save some processing
     
-    @@racist_list.each do |word|
-      banned_words << word[:word] if @@settings[:tolerance] <= word[:badness]
-    end if @@settings[:racism] == :forbidden
+    RACIST.each do |word|
+      banned_words << word[:word] if @settings[:tolerance] <= word[:badness]
+    end if @settings[:racism] == :forbidden
     
-    @@sexual_list.each do |word|
-      banned_words << word[:word] if @@settings[:tolerance] <= word[:badness]
-    end if @@settings[:sexual] == :forbidden
+    SEXUAL.each do |word|
+      banned_words << word[:word] if @settings[:tolerance] <= word[:badness]
+    end if @settings[:sexual] == :forbidden
     banned_words
   end
+  forward_to_default :forbidden_words_from_settings
   
-  def self.update_settings_from_hash(hash)
+  def update_settings_from_hash(hash)
     self.tolerance = hash[:tolerance] if hash.has_key? :tolerance
     self.check_racist = hash[:racist] if hash.has_key? :racist
     self.check_sexual = hash[:sexual] if hash.has_key? :sexual
@@ -139,6 +164,7 @@ class Profanalyzer
       self.check_all = true
     end
   end
+  forward_to_default :update_settings_from_hash
   
   # Decides whether the given string is profane, given Profanalyzer's current
   # settings. Examples:
@@ -159,22 +185,23 @@ class Profanalyzer
   # [:+racist+]  Set to +true+ or +false+ to specify racial slur checking
   # [:+tolerance+] Sets the tolerance. 0-5.
   #
-  def self.profane?(*args)
+  def profane?(*args)
     str = args[0]
     if (args.size > 1 && args[1].is_a?(Hash))
-      oldsettings = @@settings
-      self.update_settings_from_hash args[1]
+      oldsettings = @settings
+      update_settings_from_hash args[1]
     end
-    banned_words = self.forbidden_words_from_settings
+    banned_words = forbidden_words_from_settings
     banned_words.each do |word|
       if str =~ /\b#{word}\b/i
-        @@settings = oldsettings if oldsettings
+        @settings = oldsettings if oldsettings
         return true
       end
     end
-    @@settings = oldsettings if oldsettings
+    @settings = oldsettings if oldsettings
     false
   end
+  forward_to_default :profane?
  
   # Returns an array of words that match the currently set rules against the
   # provided string.  The array will be empty if no words are matched.
@@ -197,24 +224,25 @@ class Profanalyzer
   # [:+sexual+]  Set to +true+ or +false+ to specify sexual checking
   # [:+racist+]  Set to +true+ or +false+ to specify racial slur checking
   # [:+tolerance+] Sets the tolerance. 0-5.
-  def self.flagged_words(*args)
+  def flagged_words(*args)
     flagged_words = []
     str = args[0]
 
     if (args.size > 1 && args[1].is_a?(Hash))
-      oldsettings = @@settings
-      self.update_settings_from_hash args[1]
+      oldsettings = @settings
+      update_settings_from_hash args[1]
     end
 
-    banned_words = self.forbidden_words_from_settings
+    banned_words = forbidden_words_from_settings
     banned_words.each do |word|
       if str =~ /\b#{word}\b/i
         flagged_words << word
       end
     end
-    @@settings = oldsettings if oldsettings
+    @settings = oldsettings if oldsettings
     return flagged_words
   end
+  forward_to_default :flagged_words
 
   # Filters the provided string using the currently set rules, with #!@$%-like
   # characters substituted in.
@@ -237,16 +265,16 @@ class Profanalyzer
   # [:+racist+]  Set to +true+ or +false+ to specify racial slur checking
   # [:+tolerance+] Sets the tolerance. 0-5.
   #
-  def self.filter(*args)
+  def filter(*args)
     str = args[0]
     if (args.size > 1 && args[1].is_a?(Hash))
-      oldsettings = @@settings
+      oldsettings = @settings
       self.update_settings_from_hash args[1]
     end
     
     retstr = str
     
-    @@settings[:custom_subs].each do |k,v|
+    @settings[:custom_subs].each do |k,v|
       retstr.gsub!(/\b#{k.to_s}\b/i,v.to_s)
     end
     
@@ -255,20 +283,21 @@ class Profanalyzer
       retstr.gsub!(/\b#{word}\b/i,
           "#!$%@&!$%@%@&!$#!$%@&!$%@%@&!#!$%@&!$%@%@&!"[0..(word.length-1)])
     end
-    @@settings = oldsettings if oldsettings
+    @settings = oldsettings if oldsettings
     retstr
   end                 
-  
-  def self.strip(*args)
+  forward_to_default :filter
+
+  def strip(*args)
     str = args[0]
     if (args.size > 1 && args[1].is_a?(Hash))
-      oldsettings = @@settings
+      oldsettings = @settings
       self.update_settings_from_hash args[1]
     end
     
     retstr = str
     
-    @@settings[:custom_subs].each do |k,v|
+    @settings[:custom_subs].each do |k,v|
       retstr.gsub!(/\b#{k.to_s}\b/i,v.to_s)
     end
     
@@ -276,55 +305,59 @@ class Profanalyzer
     banned_words.each do |word|
       retstr.gsub!(/\b#{word}\b/i,"")
     end
-    @@settings = oldsettings if oldsettings
+    @settings = oldsettings if oldsettings
     retstr
   end 
+  forward_to_default :strip
   
   # Sets Profanalyzer's tolerance. Value should be an integer such that 
   # 0 <= T <= 5.
-  def self.tolerance=(new_tol)
-    @@settings[:tolerance] = new_tol
+  def tolerance=(new_tol)
+    @settings[:tolerance] = new_tol
   end
   
   # Returns Profanalyzer's tolerance. Value will be an integer
   # 0 <= T <= 5.
-  def self.tolerance
-    @@settings[:tolerance]
+  def tolerance
+    @settings[:tolerance]
   end
   
   # Sets Profanalyzer to scan (or not scan) for racist words, based on 
   # the set tolerance.
   # This is set to +true+ by default.
-  def self.check_racist=(check)
-    @@settings[:racism] = (check) ? :forbidden : :ignore
+  def check_racist=(check)
+    @settings[:racism] = (check) ? :forbidden : :ignore
   end
   
   # Sets Profanalyzer to scan (or not scan) for sexual words, based on the set tolerance.
   # This is set to +true+ by default.
-  def self.check_sexual=(check)
-    @@settings[:sexual] = (check) ? :forbidden : :ignore
+  def check_sexual=(check)
+    @settings[:sexual] = (check) ? :forbidden : :ignore
   end
   
   # Sets Profanalyzer to scan (or not scan) for all profane words, based on the set tolerance.
   # This is set to +true+ by default.
-  def self.check_all=(check)
-    @@settings[:profane] = (check) ? :forbidden : :ignore
+  def check_all=(check)
+    @settings[:profane] = (check) ? :forbidden : :ignore
   end
   
   # Sets the list of substitutions to the hash passed in. Substitutions are
   # performed such that +Profanalyzer.filter(key) = value+.
-  def self.subtitutions=(hash)
-    @@settings[:custom_subs] = hash
+  def substitutions=(hash)
+    @settings[:custom_subs] = hash
   end
   
   # Sets a custom substitution for the filter.
   # Can be passed as +substitute("foo","bar")+ or +"foo" => "bar"+
-  def self.substitute(*args)
+  def substitute(*args)
     case args[0]
     when String
-      @@settings[:custom_subs].merge!(args[0] => args[1])
+      @settings[:custom_subs].merge!(args[0] => args[1])
     when Hash
-      @@settings[:custom_subs].merge!(args[0])
+      @settings[:custom_subs].merge!(args[0])
     end
   end
+
+  forward_to_default :tolerance, :tolerance=, :check_racist=, :check_sexual=, :check_all=
+  forward_to_default :substitutions, :substitute
 end
