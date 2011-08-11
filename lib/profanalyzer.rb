@@ -209,10 +209,10 @@ class Profanalyzer
     banned_words = self.forbidden_words_from_settings
     banned_words.each do |word|
       if str =~ /\b#{word}\b/i
-        @@settings = oldsettings if oldsettings
         flagged_words << word
       end
     end
+    @@settings = oldsettings if oldsettings
     return flagged_words
   end
 
