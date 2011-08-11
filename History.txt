@@ -1,3 +1,8 @@
+=== 1.2.0 / 2011-08-11
+
+* Added #flagged_words to find the discovered offending words. (Thanks nilmethod/Chris Hobbs!)
+* You can now instantiate Profanalyzer to have multiple analyzers with potentially different settings.
+
 === 0.2.1 / 2009-03-25
 
 * Fixed some wordlist errors.

@@ -1,6 +1,6 @@
 History.txt
 Manifest.txt
-README.markdown
+README.md
 Rakefile
 config/list.yml
 lib/profanalyzer.rb
