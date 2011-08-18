@@ -198,21 +198,20 @@ class Profanalyzer
   # [:+racist+]  Set to +true+ or +false+ to specify racial slur checking
   # [:+tolerance+] Sets the tolerance. 0-5.
   def self.flagged_words(*args)
-    flagged_words = []
     str = args[0]
+
+    # split the string into an array and remove non alpha characters
+    # set list of banned words to Profanalyzer's current list
+    extracted_words = str.split.map {|word| word = word.downcase.gsub(/[^a-z]/,'')}
+    banned_words = self.forbidden_words_from_settings
 
     if (args.size > 1 && args[1].is_a?(Hash))
       oldsettings = @@settings
       self.update_settings_from_hash args[1]
     end
 
-    banned_words = self.forbidden_words_from_settings
-    banned_words.each do |word|
-      if str =~ /\b#{word}\b/i
-        @@settings = oldsettings if oldsettings
-        flagged_words << word
-      end
-    end
+    # intersect banned and extracted words to find matches
+    flagged_words = (banned_words & extracted_words)
     return flagged_words
   end
 
