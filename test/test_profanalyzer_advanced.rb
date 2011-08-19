@@ -61,4 +61,13 @@ class TestProfanalyzer < Test::Unit::TestCase
     assert_equal(filtered_string, Profanalyzer.filter(original_string, :tolerance => 0, :sexual => false, :racist => true))
   end
 
+  def test_custom_word
+    original_string = "You're a silly little wiener."
+    analyzer = Profanalyzer.new
+    analyzer.add_word('silly', 3)
+    analyzer.add_word('wiener', 4, :sexual => true)
+    assert_equal(true, analyzer.profane?(original_string, :tolerance => 3))
+    assert_equal(true, analyzer.profane?(original_string, :tolerance => 4, :sexual => true))
+    assert_equal(false, analyzer.profane?(original_string, :tolerance => 4, :sexual => false))
+  end
 end

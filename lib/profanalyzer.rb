@@ -98,7 +98,7 @@ require 'yaml'
 # SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 class Profanalyzer
   
-  VERSION = "1.1.0"
+  VERSION = "1.2.0"
   
   DEFAULT_TOLERANCE = 4
   
@@ -131,6 +131,16 @@ class Profanalyzer
   end
 
   DEFAULT_INSTANCE = new
+
+  DEFAULT_OPTS = {:profane => true, :racist => false, :sexist => false}
+  def add_word(text, badness, opts={})
+    opts = DEFAULT_OPTS.merge(opts)
+    word = {:word => text, :badness => badness}.merge(opts)
+    FULL << word   if word[:profane]
+    RACIST << word if word[:racist]
+    SEXUAL << word if word[:sexual]
+  end
+  forward_to_default :add_word
 
   def forbidden_words_from_settings # :nodoc:
     banned_words = []
